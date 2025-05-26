@@ -27,11 +27,10 @@
         <el-aside width="200px" class="aside">
 
           <!-- 添加左侧侧边栏 -->
-          <el-menu>
+          <el-menu router>
 
             <!-- 首页菜单 -->
              <el-menu-item index="/index">
-        
               <el-icon><Promotion></Promotion></el-icon>首页
             </el-menu-item>
 
@@ -70,7 +69,7 @@
 
 
         <el-main>
-          右侧核心展示区域
+          <router-view></router-view>
         </el-main>
       </el-container>
     </el-container>
