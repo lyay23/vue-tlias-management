@@ -7,7 +7,7 @@ import axios from 'axios';
  * @property {number} timeout - 请求超时时间（单位：毫秒），超过600000毫秒未响应则请求失败
  */
 const request = axios.create({
-  baseURL: 'https://m1.apifoxmock.com/m1/6421010-6118327-default', // 所有请求的基础路径，可根据后端接口地址统一配置
+  baseURL: '/api', // 所有请求的基础路径，可根据后端接口地址统一配置
   timeout: 600000 // 请求超时时间设置为10分钟（600000ms）
 });
 
