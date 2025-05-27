@@ -1,0 +1,37 @@
+import axios from 'axios';
+
+/**
+ * @description 创建axios实例对象
+ * @param {Object} config - axios实例配置对象
+ * @property {string} baseURL - 基础URL，用于拼接请求地址（示例：'/api'会自动添加到所有请求URL前面）
+ * @property {number} timeout - 请求超时时间（单位：毫秒），超过600000毫秒未响应则请求失败
+ */
+const request = axios.create({
+  baseURL: 'https://m1.apifoxmock.com/m1/6421010-6118327-default', // 所有请求的基础路径，可根据后端接口地址统一配置
+  timeout: 600000 // 请求超时时间设置为10分钟（600000ms）
+});
+
+/**
+ * @description axios响应拦截器（处理响应数据的统一入口）
+ * @param {Function} response => response.data - 成功响应处理函数
+ *   - 作用：对所有接口返回的response对象进行预处理
+ *   - 常规操作：提取response中的data字段（后端返回的业务数据通常存储在此）
+ * @param {Function} error => Promise.reject(error) - 失败响应处理函数
+ *   - 作用：统一处理请求失败的情况（如网络错误、超时、后端异常等）
+ *   - 常规操作：将错误对象包装为Promise.reject以便上层调用捕获
+ */
+request.interceptors.response.use(
+  (response) => { // 响应成功时的回调函数
+    // 这里默认返回response中的data字段，通常后端返回的结构为{code: xxx, data: xxx, message: xxx}
+    // 可根据实际需求进一步处理（如统一错误码判断、数据格式化等）
+    return response.data;
+  },
+  (error) => { // 响应失败时的回调函数
+    // 对请求错误进行统一处理（如记录错误日志、提示用户、重试机制等）
+    // 此处直接返回 rejected 状态的Promise，以便调用方通过.catch()捕获错误
+    return Promise.reject(error);
+  }
+);
+
+// 导出axios实例对象，供其他模块调用
+export default request;

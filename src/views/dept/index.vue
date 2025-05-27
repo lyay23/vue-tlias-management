@@ -1,6 +1,6 @@
 <script setup>
 import { ref ,onMounted} from "vue";
-import axios from "axios";
+import { queryAllApi} from "@/api/dept";
 
 // 定义钩子函数，当页面加载完毕就会调用这函数，然后这个函数就会调用serch方法，
 // 就会调用链接，将获取的值赋给deptList，然后就在页面显示了
@@ -9,14 +9,18 @@ onMounted(() => { //生命周期
 });
 // 查询部门列表
  const search=async() => { 
- const result = await axios.get("https://m1.apifoxmock.com/m1/6421010-6118327-default/depts");
+// 注释掉旧代码  
+//  const result = await axios.get("https://m1.apifoxmock.com/m1/6421010-6118327-default/depts");
+//  // 如果code为1就显示数据，否则提示错误信息
+//  if(result.data.code == 1) { //布尔类型
+//    deptList.value = result.data.data;
+//  } else {
+//    this.$message.error(result.data.message);
+//  }
 
- // 如果code为1就显示数据，否则提示错误信息
- if(result.data.code == 1) { //布尔类型
-   deptList.value = result.data.data;
- } else {
-   this.$message.error(result.data.message);
- }
+  const result = await queryAllApi();
+    deptList.value = result.data;
+
 };
 
 //定义响应式数据
