@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { queryAllApi ,addApi} from "@/api/dept";
+import { queryAllApi, addApi } from "@/api/dept";
 import { ElMessage } from "element-plus";
 
 // 定义钩子函数，当页面加载完毕就会调用这函数，然后这个函数就会调用serch方法，
@@ -31,30 +31,38 @@ const deptList = ref([]);
 // Dialog对话框组件
 const dialogFormVisible = ref(false);
 // 部门名称
-const dept = ref({name:''});
+const dept = ref({ name: '' });
 // 动态表单标题，当新增时候标题为新增部门，否则为修改部门
 const fromTitle = ref('');
 // 保存按钮
-const save = async() => {
-  // 发送请求，保存数据-调用接口，并且将部门数据传入给api接口，然后api在将数据使用post传入后端
-  // await 是 await 是一个关键字，用来等待一个 Promise 对象。当发送请求的时候，await 会等待接口返回数据，然后返回数据
-  // 否则会直接执行完毕用户看不到交互结果
-  const result = await addApi(dept.value);
+const save = async () => {
+  // 进行表单校验
+  if (!deptFormRef.value) { return }
+  deptFormRef.value.validate(async(valid) => { // valid表示是否通过校验
+    if (valid) {
+      // 发送请求，保存数据-调用接口，并且将部门数据传入给api接口，然后api在将数据使用post传入后端
+      // await 是 await 是一个关键字，用来等待一个 Promise 对象。当发送请求的时候，await 会等待接口返回数据，然后返回数据
+      // 否则会直接执行完毕用户看不到交互结果
+      const result = await addApi(dept.value);
 
-  // 做一个判断，如果返回的数据是成功，那么就提示用户，并且将表单清空
-  if (result.code ) {
-    ElMessage.success("添加成功");
-  
-    // 关闭对话框
-    dialogFormVisible.value = false;
+      // 做一个判断，如果返回的数据是成功，那么就提示用户，并且将表单清空
+      if (result.code) {
+        ElMessage.success("添加成功");
 
+        // 关闭对话框
+        dialogFormVisible.value = false;
 
+        // 查询最新数据
+        search();
+      } else {
+        ElMessage.error(result.msg);
+      }
+    }else {
+      ElMessage.error("表单校验未通过");
+    }
 
-    // 查询最新数据
-    search();
-  }else {
-    ElMessage.error(result.msg);
-  }
+  });
+
 };
 
 // 部门新增按钮
@@ -64,9 +72,29 @@ const addDept = () => {
   // 然后将表单标题设置为新增部门
   fromTitle.value = '新增部门';
   // 重置表单
-  dept.value = {name:''};
+  dept.value = { name: '' };
+
+  //  清空表单校验
+  if(deptFormRef.value){
+    deptFormRef.value.resetFields();
+  }
 
 };
+
+
+// 表单校验相关
+const rules = ref({
+  name: [
+    // required: true部门名称必填，trigger: "blur" 表示失去焦点时触发校验
+    { required: true, message: "请输入部门名称", trigger: "blur" },
+    { min: 2, max: 10, message: "长度在 2 到 10 个字符", trigger: "blur" },
+  ],
+});
+
+
+// 定义响应式对象-用于校验表单数据（不通过不能提交）
+const deptFormRef = ref();
+
 </script>
 
 <template>
@@ -101,11 +129,12 @@ const addDept = () => {
 
 
   <!-- Dialog对话框组件 -->
-   <!-- 为了让修改部门也可以复用这个Dialog，所以要将标题动态绑定，所以要使用插槽,注意这里需要加：插槽的标签是title，所以这里要写title，而不是fromTitle -->
-<el-dialog v-model="dialogFormVisible" :title="fromTitle" width="500">
-    <el-form :model="dept">
-      <el-form-item label="部门名称" :label-width="80">
-        <el-input v-model="dept.name"  />
+  <!-- 为了让修改部门也可以复用这个Dialog，所以要将标题动态绑定，所以要使用插槽,注意这里需要加：插槽的标签是title，所以这里要写title，而不是fromTitle -->
+  <el-dialog v-model="dialogFormVisible" :title="fromTitle" width="500">
+    <el-form :model="dept" :rules="rules" ref="deptFormRef">
+      <!-- ref="deptFormRef"通过这个响应式对象我们就能引用到表单数据了 -->
+      <el-form-item label="部门名称" :label-width="80" prop="name" >
+        <el-input v-model="dept.name" />
       </el-form-item>
     </el-form>
     <template #footer>
