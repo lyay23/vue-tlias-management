@@ -17,3 +17,6 @@ export const queryAllApi = () => request.get('/depts');
 // 新增部门时我们要向后端传输数据，所以需要定义一个参数dapt，用于接收要传输的数据
 // 这样在新增时就会发送post请求，将部门数据传入后端
 export const addApi = (dept) => request.post('/depts', dept);
+
+// 根据id查询部门信息
+export const queryByIdApi = (id) => request.get(`/depts/${id}`);

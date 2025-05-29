@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { queryAllApi, addApi } from "@/api/dept";
+import { queryAllApi, addApi,queryByIdApi } from "@/api/dept";
 import { ElMessage } from "element-plus";
 
 // 定义钩子函数，当页面加载完毕就会调用这函数，然后这个函数就会调用serch方法，
@@ -95,6 +95,24 @@ const rules = ref({
 // 定义响应式对象-用于校验表单数据（不通过不能提交）
 const deptFormRef = ref();
 
+// 编辑操作-接收部门id
+const edit = async (id)=>{
+  // 这样就调用了api中的根据id查询部门信息的接口
+  const result = await queryByIdApi(id);
+  if(result.code){
+    // 展示对话框
+    dialogFormVisible.value = true;
+    // 设置表单标题为编辑部门
+    fromTitle.value = '编辑部门';
+    // 将部门数据设置给dept对象（将数据回显到表单输入框中）
+    dept.value = result.data;
+    // 重置表单校验
+    if(deptFormRef.value){
+      deptFormRef.value.resetFields();
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -111,8 +129,8 @@ const deptFormRef = ref();
       <el-table-column prop="name" label="部门名称" width="260" align="center" />
       <el-table-column prop="updateTime" label="最后操作时间" width="300" align="center" />
       <el-table-column label="操作" align="center">
-        <template #default="scope">
-          <el-button type="primary" size="small">
+        <template #default="scope" >
+          <el-button type="primary" size="small" @click="edit(scope.row.id)">
             <el-icon>
               <Edit />
             </el-icon>编辑
