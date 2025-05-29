@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { queryAllApi, addApi,queryByIdApi } from "@/api/dept";
+import { queryAllApi, addApi,queryByIdApi ,updateApi} from "@/api/dept";
 import { ElMessage } from "element-plus";
 
 // 定义钩子函数，当页面加载完毕就会调用这函数，然后这个函数就会调用serch方法，
@@ -43,8 +43,16 @@ const save = async () => {
       // 发送请求，保存数据-调用接口，并且将部门数据传入给api接口，然后api在将数据使用post传入后端
       // await 是 await 是一个关键字，用来等待一个 Promise 对象。当发送请求的时候，await 会等待接口返回数据，然后返回数据
       // 否则会直接执行完毕用户看不到交互结果
-      const result = await addApi(dept.value);
+      
+      let result;// const不允许修改
+      // 添加保存与修改的校验，如果id存在，那么就是修改，否则就是新增
+      if (dept.value.id){ // 修改
+       result= await updateApi(dept.value);
 
+      }else{ // 新增
+       result = await addApi(dept.value);
+
+      }
       // 做一个判断，如果返回的数据是成功，那么就提示用户，并且将表单清空
       if (result.code) {
         ElMessage.success("添加成功");
@@ -95,7 +103,7 @@ const rules = ref({
 // 定义响应式对象-用于校验表单数据（不通过不能提交）
 const deptFormRef = ref();
 
-// 编辑操作-接收部门id
+// 查询操作-接收部门id
 const edit = async (id)=>{
   // 这样就调用了api中的根据id查询部门信息的接口
   const result = await queryByIdApi(id);

@@ -20,3 +20,6 @@ export const addApi = (dept) => request.post('/depts', dept);
 
 // 根据id查询部门信息
 export const queryByIdApi = (id) => request.get(`/depts/${id}`);
+
+//  修改部门信息
+export const updateApi = (dept) => request.put('/depts', dept);
