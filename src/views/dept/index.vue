@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { queryAllApi, addApi,queryByIdApi ,updateApi} from "@/api/dept";
-import { ElMessage } from "element-plus";
+import { queryAllApi, addApi,queryByIdApi ,updateApi,deleteApi} from "@/api/dept";
+import { ElMessage,ElMessageBox } from "element-plus";
 
 // 定义钩子函数，当页面加载完毕就会调用这函数，然后这个函数就会调用serch方法，
 // 就会调用链接，将获取的值赋给deptList，然后就在页面显示了
@@ -121,6 +121,29 @@ const edit = async (id)=>{
   }
 }
 
+// 删除操作
+const delById = async (id)=>{
+  // 弹框提示用户是否删除
+  const result = await ElMessageBox.confirm('此操作将永久删除该部门, 是否继续?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(async() => { // 确认
+    // 删除
+    const result = await deleteApi(id);
+   // 如果删除成功，就提示用户删除成功，并且将dept
+   if(result.code){ //如果删除成功给出信息，并且刷新页面
+    ElMessage.success('删除成功');
+    search();
+   }else{//删除失败给出信息
+    ElMessage.error(result.msg);
+   }
+   
+  }).catch(() => { // 取消
+    ElMessage.info('已取消删除');
+  });
+}
+
 </script>
 
 <template>
@@ -143,7 +166,7 @@ const edit = async (id)=>{
               <Edit />
             </el-icon>编辑
           </el-button>
-          <el-button type="danger" size="small">
+          <el-button type="danger" size="small" @click="delById(scope.row.id)">
             <el-icon>
               <Delete />
             </el-icon>删除
