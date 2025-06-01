@@ -24,8 +24,9 @@ const router = createRouter({
       {path:'dept',name:'dept',component:DeptView},
       {path:'emp',name:'emp',component:EmpView},
       {path:'log',name:'log',component:LogView},
-      {path:'stuReport',name:'stuReport',component:stuView},
-      {path:'empReport',name:'empReport',component:stuReportView},
+      {path:'stu',name:'stu',component:stuView},
+      {path:'stuReport',name:'stuReport',component:stuReportView},
+      {path:'empReport',name:'empReport',component:EmpReportView}
      ]
     },
     { path: '/login', name: 'login', component: LoginView }
