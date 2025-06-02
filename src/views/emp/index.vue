@@ -1,20 +1,31 @@
 <script setup>
 
-import { ref, watch } from 'vue';
+import { ref, watch,onMounted } from 'vue';
+import{queryPageApi} from '@/api/emp'
 
 // 搜索表单对象-根据姓名，年龄，日期查询
-const searchEmp = ref({ name: '', gender: undefined, date: [], begin: '', end: '' })
+const searchEmp = ref({ name: '', gender: '', date: [], begin: '', end: '' })
 
 // 查询员工列表的函数
-const search = () => {
-
+const search = async() => {
+   const result =await queryPageApi(searchEmp.value.name,searchEmp.value.gender,
+                         searchEmp.value.begin,searchEmp.value.end,currentPage.value,pageSize.value);
+  if(result.code){
+    empList.value=result.data.rows;
+    total.value=result.data.total
+  }
 }
 // 清空函数
 const clear = () => {
   // 将表单值置为空，然后再重新查询一次
-  searchEmp.value = { name: '', gender: undefined, date: [], begin: '', end: '' };
+  searchEmp.value = { name: '', gender: '', date: [], begin: '', end: '' };
   search();
 }
+
+// 钩子函数
+onMounted(()=>{
+  search();
+})
 
 // -------------watch监听----------
 
@@ -30,23 +41,7 @@ watch(() => searchEmp.value.date, (newVal, oldVal) => {
 })
 
 // 员工列表数据
-const empList = ref([
-  {
-    "id": 0,
-    "username": "string",
-    "password": "string",
-    "name": "string",
-    "gender": 0,
-    "job": 0,
-    "salary": 0,
-    "image": "https://bu.dusays.com/2025/02/15/67b092bdaab4d.jpg",
-    "entryDate": "2019-08-24",
-    "deptId": 0,
-    "deptName": "string",
-    "createTime": "2019-08-24T14:15:22.123Z",
-    "updateTime": "2019-08-24T14:15:22.123Z"
-  }
-])
+const empList = ref([])
 
 // 分页操作相关数据模型
 const currentPage = ref(1) // 页码
@@ -55,11 +50,11 @@ const background = ref(true) //背景色（是否）
 const total =ref(0) // 总记录数-后端传入的
 // 每页展示记录数发生变化时会触发
 const handleSizeChange = (val) => {
-  console.log(`每页展示${val}条记录 `)
+  search();
 }
 // 页码发生变化时会触发
 const handleCurrentChange = (val) => {
-  console.log(`当前页码: ${val}`)
+  search();
 }
 </script>
 
@@ -122,7 +117,7 @@ const handleCurrentChange = (val) => {
          <span v-else>其他</span>
         </template>
       </el-table-column>
-      <el-table-column prop="entryDate" label="入职日期" width="140" align="center"/>
+      <el-table-column prop="entryDate" label="入职时间" width="140" align="center"/>
       <el-table-column prop="updateTime" label="最后操作时间" width="200" align="center"/>
       <el-table-column label="操作" align="center">
         <template #default="scope">
