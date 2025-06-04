@@ -1,7 +1,7 @@
 <script setup>
 
 import { ref, watch, onMounted } from 'vue'
-import { queryPageApi,addApi } from '@/api/emp'
+import { queryPageApi,addApi ,queryInfoApi} from '@/api/emp'
 import { queryAllApi as queryAllDeptApi } from '@/api/dept'
 import { ElMessage } from 'element-plus';
 
@@ -206,6 +206,24 @@ const rules = ref({
 
 // 表单验证的响应式对象
 const empFromRef =ref();
+
+// ------根据id查询员工信息相关-----
+const edit =async(id) =>{
+ const result = await queryInfoApi(id);
+ if(result.code){
+  dialogVisible.value=true;
+  dialogTitle.value='修改员工';
+  employee.value=result.data;
+
+  // 对工作经历进行处理
+  let exprList= employee.value.exprList;
+  if(exprList && exprList.length>0){
+    exprList.forEach((expr) =>{
+      expr.exprDate=[expr.begin,expr.end];
+    })
+  }
+ }
+}
 </script>
 
 <template>
@@ -271,7 +289,7 @@ const empFromRef =ref();
       <el-table-column prop="updateTime" label="最后操作时间" width="200" align="center" />
       <el-table-column label="操作" align="center">
         <template #default="scope">
-          <el-button type="primary" size="small" @click="">
+          <el-button type="primary" size="small" @click="edit(scope.row.id)">
             <el-icon>
               <Edit />
             </el-icon>编辑</el-button>

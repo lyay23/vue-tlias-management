@@ -12,7 +12,7 @@ export const queryPageApi =(name,gender,begin,end,page,pageSize)=>
 
 export const addApi = (emp) => request.post('/emps', emp);
 // 根据id查询部门信息
-
+export const queryInfoApi = (id) => request.get(`/emps/${id}`);
 //  修改部门信息
 
 // 删除部门信息
