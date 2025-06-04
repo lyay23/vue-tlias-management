@@ -10,6 +10,7 @@ export const queryPageApi =(name,gender,begin,end,page,pageSize)=>
 
 // 新增员工
 
+export const addApi = (emp) => request.post('/emps', emp);
 // 根据id查询部门信息
 
 //  修改部门信息
