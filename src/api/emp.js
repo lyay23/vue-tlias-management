@@ -14,5 +14,6 @@ export const addApi = (emp) => request.post('/emps', emp);
 // 根据id查询部门信息
 export const queryInfoApi = (id) => request.get(`/emps/${id}`);
 //  修改部门信息
+export const updateApi = (emp) => request.put('/emps', emp);
 
 // 删除部门信息

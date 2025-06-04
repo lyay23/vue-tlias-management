@@ -1,7 +1,7 @@
 <script setup>
 
 import { ref, watch, onMounted } from 'vue'
-import { queryPageApi,addApi ,queryInfoApi} from '@/api/emp'
+import { queryPageApi,addApi ,queryInfoApi,updateApi} from '@/api/emp'
 import { queryAllApi as queryAllDeptApi } from '@/api/dept'
 import { ElMessage } from 'element-plus';
 
@@ -171,7 +171,13 @@ const save= async() =>{
   if(!empFromRef.value) return;
   empFromRef.value.validate(async (valid) =>{ // valid标识是否通过：true通过/false不通过
    if(valid){ // 通过
-    const result = await addApi(employee.value);
+
+    let result;
+    if(employee.value.id){
+    result = await updateApi(employee.value);
+    }else{
+    result = await addApi(employee.value);
+    }
     if(result.code){
       ElMessage.success("保存成功");
       dialogVisible.value=false;
