@@ -1,9 +1,9 @@
 <script setup>
 
 import { ref, watch, onMounted } from 'vue'
-import { queryPageApi,addApi ,queryInfoApi,updateApi} from '@/api/emp'
+import { queryPageApi,addApi ,queryInfoApi,updateApi,deleteApi} from '@/api/emp'
 import { queryAllApi as queryAllDeptApi } from '@/api/dept'
-import { ElMessage } from 'element-plus';
+import { ElMessage,ElMessageBox } from 'element-plus';
 
 // --------元数据相关----------
 //职位列表数据
@@ -230,6 +230,28 @@ const edit =async(id) =>{
   }
  }
 }
+
+// ------删除员工相关-----
+const deleteById = (id) =>{
+  ElMessageBox.confirm('此操作将永久删除该员工, 是否继续?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(async() => {
+    // 删除
+    const result = await deleteApi(id);
+    if (result.code) {
+      ElMessage.success('删除成功');
+      search();
+    } else{
+      ElMessage.error(result.msg);
+    }
+  }).catch(() => {
+    ElMessage.info('已取消删除');
+  });
+   
+  
+}
 </script>
 
 <template>
@@ -299,7 +321,7 @@ const edit =async(id) =>{
             <el-icon>
               <Edit />
             </el-icon>编辑</el-button>
-          <el-button type="danger" size="small" @click="">
+          <el-button type="danger" size="small" @click="deleteById(scope.row.id)">
             <el-icon>
               <Delete />
             </el-icon>删除

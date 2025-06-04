@@ -11,9 +11,10 @@ export const queryPageApi =(name,gender,begin,end,page,pageSize)=>
 // 新增员工
 
 export const addApi = (emp) => request.post('/emps', emp);
-// 根据id查询部门信息
+// 根据id查询员工信息
 export const queryInfoApi = (id) => request.get(`/emps/${id}`);
-//  修改部门信息
+//  修改员工信息
 export const updateApi = (emp) => request.put('/emps', emp);
 
-// 删除部门信息
+// 删除员工信息
+export const deleteApi = (ids) => request.delete(`/emps?ids=${ids}`);
