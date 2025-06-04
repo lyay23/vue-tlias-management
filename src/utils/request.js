@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
+import router from '../router'
 
 /**
  * @description 创建axios实例对象
@@ -45,6 +47,14 @@ request.interceptors.response.use(
     return response.data;
   },
   (error) => { // 响应失败时的回调函数
+     if (error.response.status === 401) { // 全等-类型与值相同
+      // 提示信息
+      ElMessage.error('登录超时，请重新登录');
+      // 跳转到登陆页面
+      router.push('/login');
+    }else{
+      ElMessage.error("接口访问异常");
+    }
     // 对请求错误进行统一处理（如记录错误日志、提示用户、重试机制等）
     // 此处直接返回 rejected 状态的Promise，以便调用方通过.catch()捕获错误
     return Promise.reject(error);
