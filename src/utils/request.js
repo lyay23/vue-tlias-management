@@ -11,6 +11,24 @@ const request = axios.create({
   timeout: 600000 // 请求超时时间设置为10分钟（600000ms）
 });
 
+// 请求拦截器-获取localStorage中的token数据，在请求头中增加token
+request.interceptors.request.use(
+  (config) => { // 请求成功时的回调函数
+    // 获取localStorage中的token数据
+   const loginUser= JSON.parse(localStorage.getItem('loginUser'));
+    // 判断token是否存在，如果存在则将其添加到请求头中
+    if (loginUser&&loginUser.token) {
+      config.headers.token=loginUser.token;
+    }
+    return config;
+  },
+  (error) => { // 请求失败时的回调函数
+}
+)
+
+
+
+
 /**
  * @description axios响应拦截器（处理响应数据的统一入口）
  * @param {Function} response => response.data - 成功响应处理函数

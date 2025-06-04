@@ -39,6 +39,9 @@ onMounted(() => {
 
  // 查询所有部门数据
   queryAllDepts();
+
+  // 获取token
+  getToken();
 })
 
 // -------------watch监听----------
@@ -285,6 +288,16 @@ ElMessageBox.confirm('此操作将永久删除该员工, 是否继续?', '提示
   });
 }
 
+// 声明token的响应式数据
+const token = ref('');
+
+// 获取token
+const getToken = async() =>{
+  const loginUser=JSON.parse(localStorage.getItem('loginUser'))
+  if(loginUser && loginUser.token){
+    token.value = loginUser.token;
+  }
+}
 </script>
 
 <template>
@@ -445,7 +458,7 @@ ElMessageBox.confirm('此操作将永久删除该员工, 是否继续?', '提示
         <el-col :span="24">
           <el-form-item label="头像">
             <el-upload class="avatar-uploader" action="/api/upload" :show-file-list="false"
-              :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+              :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload" :headers="{'token':token}">
               <img v-if="employee.image" :src="employee.image" class="avatar" />
               <el-icon v-else class="avatar-uploader-icon">
                 <Plus />

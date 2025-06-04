@@ -8,15 +8,17 @@
   const router = useRouter();
   // 登录
 const login = async() =>{ 
-  const res = await loginApi(loginForm.value);
-  if(res.code){
+  const result = await loginApi(loginForm.value);
+  if(result.code){
     // 1. 提示登录成功
     ElMessage.success("登录成功");
-    // 2. 跳转到首页
+    // 2. 保存当前用户信息
+    localStorage.setItem('loginUser',JSON.stringify(result.data));
+    // 3. 跳转到首页
     router.push('/index');
 
   }else{
-    ElMessage.error(res.msg)
+    ElMessage.error(result.msg)
   }
 
 }
