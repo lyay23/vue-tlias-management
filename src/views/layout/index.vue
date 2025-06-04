@@ -1,4 +1,16 @@
 <script setup>
+import {ref,onMounted} from 'vue'
+// 当前登录员工
+const loginName = ref('');
+// 定义钩子函数
+onMounted(()=>{
+  // 获取当前登录用户名
+  const loginUser = JSON.parse(localStorage.getItem('loginUser'));
+  if(loginUser&&loginUser.name){
+    loginName.value = loginUser.name;
+  }
+
+})
 
 </script>
 
@@ -17,7 +29,7 @@
           <a href="">
             <el-icon>
               <SwitchButton />
-            </el-icon> 退出登录
+            </el-icon> 退出登录【{{loginName}}】
           </a>
         </span>
       </el-header>
