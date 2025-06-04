@@ -249,9 +249,42 @@ const deleteById = (id) =>{
   }).catch(() => {
     ElMessage.info('已取消删除');
   });
-   
-  
 }
+
+// 记录勾选的员工id
+const selectedIds = ref([]);
+
+// 批量删除员工
+const handleSelectionChange = (selection) => {// selection代表当前选中的员工数据记录
+  selectedIds.value = selection.map(item => item.id)
+}
+
+// 批量删除
+const deleteByIds  = () =>{ 
+ElMessageBox.confirm('此操作将永久删除该员工, 是否继续?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(async() => {
+
+    if(selectedIds.value && selectedIds.value.length>0){
+      // 删除
+    const result = await deleteApi(selectedIds.value);
+    if (result.code) {
+      ElMessage.success('删除成功');
+      search();
+    } else{
+      ElMessage.error(result.msg);
+    }
+  }else {
+      ElMessage.error("请选择要删除的员工");
+    }
+    
+  }).catch(() => {
+    ElMessage.info('已取消删除');
+  });
+}
+
 </script>
 
 <template>
@@ -284,13 +317,13 @@ const deleteById = (id) =>{
   <!-- 下方新增员工与批量删除员工按钮 -->
   <div class="container">
     <el-button type="primary" @click="addEmp">+新增员工</el-button>
-    <el-button type="danger" @click=" ">-批量删除</el-button>
+    <el-button type="danger" @click="deleteByIds">-批量删除</el-button>
   </div>
 
   <!-- 表格区域 -->
   <div class="container">
-    <el-table :data="empList" border style="width: 100%">
-      <el-table-column type="selection" width="55" align="center" />
+    <el-table :data="empList" border style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table-column type="selection"  width="55" align="center" />
       <el-table-column prop="name" label="姓名" width="120" align="center" />
       <el-table-column label="性别" width="100" align="center">
         <template #default="scope">
